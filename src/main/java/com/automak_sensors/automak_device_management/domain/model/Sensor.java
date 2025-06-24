@@ -1,9 +1,5 @@
 package com.automak_sensors.automak_device_management.domain.model;
 
-import com.automak_sensors.automak_device_management.api.model.SensorId;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.hypersistence.tsid.TSID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,11 +14,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 public class Sensor {
-    @JsonSerialize(using = ToStringSerializer.class)
-
     @Id
     @Column(columnDefinition = "BIGINT")
-    private SensorId id;
+    private Long id;
     private String name;
     private String ip;
     private String location;
