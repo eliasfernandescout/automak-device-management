@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class IdGenerator {
-    public static Long generateId() {
+    public static String generateId() {
         LocalDateTime now = LocalDateTime.now();
         String idStr = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"))
-                + String.format("%09d", now.getNano());
-        return Long.parseLong(idStr);
+                + String.format("%09d", now.getNano())
+                + String.format("%04d", (int)(Math.random() * 10000));
+        return idStr;
     }
 }

@@ -1,7 +1,7 @@
 package com.automak_sensors.automak_device_management.api.controller;
 
-import com.automak_sensors.automak_device_management.api.model.SensorId;
 import com.automak_sensors.automak_device_management.api.model.SensorInput;
+import com.automak_sensors.automak_device_management.api.model.SensorOutput;
 import com.automak_sensors.automak_device_management.common.IdGenerator;
 import com.automak_sensors.automak_device_management.domain.model.Sensor;
 import com.automak_sensors.automak_device_management.domain.repository.SensorRepository;
@@ -19,20 +19,41 @@ public class SensorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Sensor createSensor(@RequestBody SensorInput input) {
+    public SensorOutput createSensor(@RequestBody SensorInput input) {
         Sensor sensor = Sensor.builder()
-                .id(new SensorId(IdGenerator.generateTSID()))
+                .id(IdGenerator.generateId())
                 .name(input.getName())
                 .ip(input.getIp())
                 .location(input.getLocation())
                 .protocol(input.getProtocol())
                 .model(input.getModel())
-                .enabled(false)
+                .enabled(input.getEnabled())
                 .build();
 
-        return  sensorRepository.saveAndFlush(sensor);
-
+        Sensor saved = sensorRepository.saveAndFlush(sensor);
+        return SensorOutput.builder()
+                .id(saved.getId())
+                .name(saved.getName())
+                .ip(saved.getIp())
+                .location(saved.getLocation())
+                .protocol(saved.getProtocol())
+                .model(saved.getModel())
+                .enabled(saved.getEnabled())
+                .build();
     }
 
-
+    @GetMapping("/{id}")
+    public ResponseEntity<SensorOutput> getSensorById(@PathVariable String id) {
+        return sensorRepository.findById(id)
+                .map(sensor -> ResponseEntity.ok(SensorOutput.builder()
+                        .id(sensor.getId())
+                        .name(sensor.getName())
+                        .ip(sensor.getIp())
+                        .location(sensor.getLocation())
+                        .protocol(sensor.getProtocol())
+                        .model(sensor.getModel())
+                        .enabled(sensor.getEnabled())
+                        .build()))
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

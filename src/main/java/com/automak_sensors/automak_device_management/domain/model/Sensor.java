@@ -15,8 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Sensor {
     @Id
-    @Column(columnDefinition = "BIGINT")
-    private Long id;
+    private String id;
     private String name;
     private String ip;
     private String location;
