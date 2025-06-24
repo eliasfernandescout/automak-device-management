@@ -6,6 +6,9 @@ import com.automak_sensors.automak_device_management.common.IdGenerator;
 import com.automak_sensors.automak_device_management.domain.model.Sensor;
 import com.automak_sensors.automak_device_management.domain.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +58,18 @@ public class SensorController {
                         .enabled(sensor.getEnabled())
                         .build()))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public Page<SensorOutput> getSensors(@PageableDefault Pageable pageable) {
+        return sensorRepository.findAll(pageable).map(sensor -> SensorOutput.builder()
+                .id(sensor.getId())
+                .name(sensor.getName())
+                .ip(sensor.getIp())
+                .location(sensor.getLocation())
+                .protocol(sensor.getProtocol())
+                .model(sensor.getModel())
+                .enabled(sensor.getEnabled())
+                .build());
     }
 }
