@@ -13,4 +13,3 @@ public class H2ServerConfig {
         return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9090");
     }
 }
-
