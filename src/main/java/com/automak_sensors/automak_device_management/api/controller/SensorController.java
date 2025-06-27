@@ -86,4 +86,26 @@ public class SensorController {
         sensorMonitoringClient.enableMonitoring(sensorId);
     }
 
+    @DeleteMapping("/{sensorId}/disable")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void disableSensor(@PathVariable String sensorId) {
+        Sensor sensor = sensorRepository.findById(sensorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        sensor.setEnabled(false);
+        sensorRepository.save(sensor);
+        sensorMonitoringClient.disableMonitoring(sensorId);
+    }
+
+    private SensorOutput convertToModel(Sensor sensor) {
+        return SensorOutput.builder()
+                .id(sensor.getId())
+                .name(sensor.getName())
+                .ip(sensor.getIp())
+                .location(sensor.getLocation())
+                .protocol(sensor.getProtocol())
+                .model(sensor.getModel())
+                .enabled(sensor.getEnabled())
+                .build();
+    }
+
 }
