@@ -1,5 +1,6 @@
 package com.automak_sensors.automak_device_management.api.controller;
 
+import com.automak_sensors.automak_device_management.api.client.SensorMonitoringClient;
 import com.automak_sensors.automak_device_management.api.model.SensorInput;
 import com.automak_sensors.automak_device_management.api.model.SensorOutput;
 import com.automak_sensors.automak_device_management.common.IdGenerator;
@@ -12,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/sensors")
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class SensorController {
 
     private final SensorRepository sensorRepository;
+    private final SensorMonitoringClient sensorMonitoringClient;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -72,4 +75,15 @@ public class SensorController {
                 .enabled(sensor.getEnabled())
                 .build());
     }
+
+    @PutMapping("/{sensorId}/enable")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void enableSensor(@PathVariable String sensorId) {
+        Sensor sensor = sensorRepository.findById(sensorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        sensor.setEnabled(true);
+        sensorRepository.save(sensor);
+        sensorMonitoringClient.enableMonitoring(sensorId);
+    }
+
 }
